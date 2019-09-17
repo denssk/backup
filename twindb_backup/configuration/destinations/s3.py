@@ -7,12 +7,14 @@ class S3Config(object):
                  aws_access_key_id,
                  aws_secret_access_key,
                  bucket,
-                 aws_default_region='us-east-1'):
+                 aws_default_region='us-east-1',
+                 folder):
 
         self._aws_access_key_id = aws_access_key_id
         self._aws_secret_access_key = aws_secret_access_key
         self._bucket = bucket
         self._aws_default_region = aws_default_region
+        self._folder = folder
 
     @property
     def aws_access_key_id(self):
@@ -33,3 +35,8 @@ class S3Config(object):
     def aws_default_region(self):
         """AWS_DEFAULT_REGION"""
         return self._aws_default_region
+
+    @property
+    def folder(self):
+        """"folder for upload"""
+        return self._folder

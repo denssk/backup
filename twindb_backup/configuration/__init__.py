@@ -228,7 +228,8 @@ class TwinDBBackupConfig(object):
                     aws_access_key_id=self.s3.aws_access_key_id,
                     aws_secret_access_key=self.s3.aws_secret_access_key,
                     aws_default_region=self.s3.aws_default_region,
-                    hostname=backup_source
+                    hostname=backup_source,
+                    folder=self.s3.folder
                 )
             elif backup_destination == 'gcs':
                 return GCS(
