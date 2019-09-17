@@ -67,10 +67,12 @@ class S3(BaseDestination):
     def __init__(self, **kwargs):
 
         self._bucket = kwargs.get('bucket')
+        self._folder = kwargs.get('folder')
         self._hostname = kwargs.get('hostname', socket.gethostname())
 
-        self.remote_path = 's3://{bucket}'.format(
+        self.remote_path = 's3://{bucket}/{folder}/'.format(
             bucket=self._bucket
+            folder=self._folder
         )
         super(S3, self).__init__(self.remote_path)
 
@@ -198,7 +200,7 @@ class S3(BaseDestination):
         """
 
         path = "%s/%s" % (self.remote_path, copy.key)
-        object_key = self.folder + urlparse(path).path.lstrip('/')
+        object_key = urlparse(path).path.lstrip('/')
 
         def _download_object(s3_client, bucket_name, key, read_fd, write_fd):
             # The read end of the pipe must be closed in the child process
@@ -368,7 +370,7 @@ class S3(BaseDestination):
         :param handler: stdout handler from backup source
         """
         with handler as file_obj:
-            ret = self._upload_object(file_obj, self.folder + "/" + filepath)
+            ret = self._upload_object(file_obj, self._folder + '/' + filepath)
             LOG.debug('Returning code %d', ret)
 
     @staticmethod
@@ -505,7 +507,7 @@ class S3(BaseDestination):
         :param url: S3 url
         :type url: str
         """
-        object_key = self._folder + urlparse(url).path.lstrip('/')
+        object_key = urlparse(url).path.lstrip('/')
         self.s3_client.put_object_acl(Bucket=self._bucket, ACL=access_mode,
                                       Key=object_key)
 
@@ -517,7 +519,7 @@ class S3(BaseDestination):
         :return: Public url
         :rtype: str
         """
-        object_key = self._folder + urlparse(s3_url).path.lstrip('/')
+        object_key = urlparse(s3_url).path.lstrip('/')
         return self.s3_client.generate_presigned_url(
             'get_object',
             Params={
